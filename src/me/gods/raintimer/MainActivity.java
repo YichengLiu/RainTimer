@@ -42,16 +42,14 @@ public class MainActivity extends FragmentActivity implements
     public void onRestoreInstanceState(Bundle savedInstanceState) {
         // Restore the previously serialized current tab position.
         if (savedInstanceState.containsKey(STATE_SELECTED_NAVIGATION_ITEM)) {
-            getActionBar().setSelectedNavigationItem(
-                    savedInstanceState.getInt(STATE_SELECTED_NAVIGATION_ITEM));
+            getActionBar().setSelectedNavigationItem(savedInstanceState.getInt(STATE_SELECTED_NAVIGATION_ITEM));
         }
     }
 
     @Override
     public void onSaveInstanceState(Bundle outState) {
         // Serialize the current tab position.
-        outState.putInt(STATE_SELECTED_NAVIGATION_ITEM, getActionBar()
-                .getSelectedNavigationIndex());
+        outState.putInt(STATE_SELECTED_NAVIGATION_ITEM, getActionBar().getSelectedNavigationIndex());
     }
 
     @Override
@@ -71,16 +69,16 @@ public class MainActivity extends FragmentActivity implements
         
         if (tab.getPosition() == 0) {
             fragment = new TimerFragment();
+        } else if(tab.getPosition() == 2) {
+            fragment = new PreferenceFragment();
         } else {
             fragment = new DummySectionFragment();
         }
         
         Bundle args = new Bundle();
-        args.putInt(DummySectionFragment.ARG_SECTION_NUMBER,
-                tab.getPosition() + 1);
+        args.putInt(DummySectionFragment.ARG_SECTION_NUMBER, tab.getPosition() + 1);
         fragment.setArguments(args);
-        getSupportFragmentManager().beginTransaction()
-                .replace(R.id.container, fragment).commit();
+        getSupportFragmentManager().beginTransaction().replace(R.id.container, fragment).commit();
     }
 
     @Override

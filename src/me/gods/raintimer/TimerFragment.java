@@ -2,6 +2,11 @@ package me.gods.raintimer;
 
 import java.util.Locale;
 
+import org.json.JSONArray;
+import org.json.JSONException;
+
+import android.app.Activity;
+import android.content.SharedPreferences;
 import android.os.Bundle;
 import android.os.Handler;
 import android.os.Message;
@@ -15,12 +20,12 @@ import android.widget.Spinner;
 import android.widget.TextView;
 
 public class TimerFragment extends Fragment {
-    private static final String[] m={"A型","B型","O型","AB型","其他"};
-
     private Spinner eventSpinner;
     private ArrayAdapter<String> adapter;
     private TextView timerText;
     private Button switcherButton;
+
+    private SharedPreferences settings;
 
     private enum State {
         reset,
@@ -63,10 +68,37 @@ public class TimerFragment extends Fragment {
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
-        View v = inflater.inflate(R.layout.activity_timer, container, false);
+        View v = inflater.inflate(R.layout.fragment_timer, container, false);
+
+        settings = this.getActivity().getPreferences(Activity.MODE_PRIVATE);
+        String eventList = settings.getString(PreferenceFragment.PREFERENCE_KEY, "[]");
+
+        JSONArray eventArray = null;
+        try {
+            eventArray = new JSONArray(eventList);
+        } catch (JSONException e) {
+            e.printStackTrace();
+        }
+
+        int eventLength = eventArray.length();
+        String[] events;
+
+        if (eventLength == 0) {
+            events = new String[] {"default"};
+        } else {
+            events = new String[eventLength];
+
+            for (int i = 0; i < eventLength; i++) {
+                try {
+                    events[i] = eventArray.getString(i);
+                } catch (JSONException e) {
+                    e.printStackTrace();
+                }
+            }
+        }
 
         eventSpinner = (Spinner)v.findViewById(R.id.event_spinner);
-        adapter = new ArrayAdapter<String>(this.getActivity(), R.layout.spinner_text, m);
+        adapter = new ArrayAdapter<String>(this.getActivity(), R.layout.spinner_text, events);
         adapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
         eventSpinner.setAdapter(adapter);
 

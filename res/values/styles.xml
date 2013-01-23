@@ -1,4 +1,4 @@
-<resources>
+<resources xmlns:android="http://schemas.android.com/apk/res/android">
 
     <!--
         Base application theme, dependent on API level. This theme is replaced
@@ -23,5 +23,11 @@
         <item name="android:textColor">#FF7F7C</item>
 		<item name="android:fromAlpha">0.0</item>
         <item name="android:toAlpha">0.0</item>
+    </style>
+    <style name="EventListTitle">
+        <item name="android:textSize">24sp</item>
+        <item name="android:fromAlpha">0.0</item>
+        <item name="android:toAlpha">0.0</item>
+        <item name="android:padding">10dp</item>
     </style>
 </resources>
