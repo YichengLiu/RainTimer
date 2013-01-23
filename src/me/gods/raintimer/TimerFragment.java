@@ -146,6 +146,9 @@ public class TimerFragment extends Fragment {
                             e.printStackTrace();
                         }
 
+                        offsetTime += System.currentTimeMillis() - startTime;
+                        startTime = System.currentTimeMillis();
+
                         break;
                     case stop:
                         state = State.reset;

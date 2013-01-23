@@ -6,6 +6,8 @@ import org.json.JSONArray;
 import org.json.JSONException;
 
 import android.app.Activity;
+import android.app.AlertDialog;
+import android.content.DialogInterface;
 import android.content.SharedPreferences;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
@@ -18,6 +20,7 @@ import android.view.ContextMenu.ContextMenuInfo;
 import android.widget.AdapterView.AdapterContextMenuInfo;
 import android.widget.ArrayAdapter;
 import android.widget.Button;
+import android.widget.EditText;
 import android.widget.ListView;
 
 public class PreferenceFragment extends Fragment {
@@ -67,17 +70,34 @@ public class PreferenceFragment extends Fragment {
 
         addEventButton = (Button)v.findViewById(R.id.add_event_button);
         addEventButton.setOnClickListener(new View.OnClickListener() {
-            
+
             @Override
             public void onClick(View arg0) {
-                String added = "haha";
+                //String added = "haha";
+                AlertDialog.Builder dialog = new AlertDialog.Builder(getActivity())
+                    .setTitle("Please Input Event Name")
+                    .setIcon(android.R.drawable.ic_dialog_info);
 
-                if (eventList.contains(added)) {
-                    return;
-                }
+                final EditText input = new EditText(getActivity());
 
-                eventList.add(added);
-                update();
+                dialog.setView(input)
+                    .setPositiveButton("Add", new DialogInterface.OnClickListener() {
+                        @Override
+                        public void onClick(DialogInterface dialog, int which) {
+                            String added = input.getText().toString();
+
+                            if (eventList.contains(added)) {
+                                return;
+                            }
+
+                            eventList.add(added);
+                            update();
+                        }
+                    })
+                    .setNegativeButton("Cancel", null)
+                    .show();
+
+                
             }
         });
 
