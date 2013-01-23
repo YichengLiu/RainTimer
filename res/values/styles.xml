@@ -17,4 +17,11 @@
         <!-- All customizations that are NOT specific to a particular API-level can go here. -->
     </style>
 
+    
+    <style name="TimerText">
+        <item name="android:textSize">40sp</item>
+        <item name="android:textColor">#FF7F7C</item>
+		<item name="android:fromAlpha">0.0</item>
+        <item name="android:toAlpha">0.0</item>
+    </style>
 </resources>
