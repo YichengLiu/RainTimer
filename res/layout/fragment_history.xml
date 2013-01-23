@@ -8,21 +8,53 @@
         android:layout_height="wrap_content"
         android:orientation="horizontal" >
         <TextView 
-            android:layout_width="wrap_content"
+            android:layout_width="0dip"
             android:layout_height="fill_parent"
-            android:text="@string/start_date" />
+            android:text="@string/start_date"
+            android:gravity="center_vertical"
+            android:layout_weight="1"
+            android:paddingLeft="10dip" />
         <TextView 
             android:layout_width="0dip"
             android:layout_height="fill_parent"
-            android:layout_weight="1" />
-        <Button android:layout_width="wrap_content"
-            android:layout_height="fill_parent"
-            android:text="@string/choose_btn_title" />
+            android:layout_marginTop="3dip"
+            android:layout_weight="1"
+            style="@style/ButtonTextView" />
     </LinearLayout>
-    <Switch android:text="@string/history_mode_title"
-        android:layout_width="wrap_content"
+    <LinearLayout
+        android:layout_width="fill_parent"
         android:layout_height="wrap_content"
-        android:textOn="@string/average"
-        android:textOff="@string/total"
-        android:layout_marginBottom="32dip" />
+        android:orientation="horizontal" >
+        <TextView 
+            android:layout_width="0dip"
+            android:layout_height="fill_parent"
+            android:text="@string/end_date"
+            android:gravity="center_vertical"
+            android:layout_weight="1"
+            android:paddingLeft="10dip" />
+        <TextView 
+            android:layout_width="0dip"
+            android:layout_height="fill_parent"
+            android:layout_marginTop="3dip"
+            android:layout_weight="1"
+            style="@style/ButtonTextView" />
+    </LinearLayout>
+    <LinearLayout
+        android:layout_width="fill_parent"
+        android:layout_height="wrap_content"
+        android:orientation="horizontal" >
+        <TextView
+            android:text="@string/history_mode_title"
+            android:layout_width="0dip"
+            android:layout_height="fill_parent"
+            android:gravity="center_vertical"
+            android:layout_weight="1"
+            android:paddingLeft="10dip" />
+        <Switch
+            android:layout_width="0dip"
+            android:layout_height="fill_parent"
+            android:textOn="@string/average"
+            android:textOff="@string/total"
+            android:layout_weight="1" />
+    </LinearLayout>
 </LinearLayout>

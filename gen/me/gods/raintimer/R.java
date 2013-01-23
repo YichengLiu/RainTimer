@@ -37,6 +37,7 @@ public final class R {
         public static final int app_name=0x7f040000;
         public static final int average=0x7f040008;
         public static final int choose_btn_title=0x7f04000b;
+        public static final int end_date=0x7f04000d;
         public static final int event_list=0x7f040007;
         public static final int hello_world=0x7f040004;
         public static final int history_mode_title=0x7f04000a;
@@ -74,6 +75,7 @@ public final class R {
  All customizations that are NOT specific to a particular API-level can go here. 
          */
         public static final int AppTheme=0x7f050001;
+        public static final int ButtonTextView=0x7f050004;
         public static final int EventListTitle=0x7f050003;
         public static final int TimerText=0x7f050002;
     }
