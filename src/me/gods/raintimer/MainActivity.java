@@ -72,7 +72,7 @@ public class MainActivity extends FragmentActivity implements
         } else if(tab.getPosition() == 2) {
             fragment = new PreferenceFragment();
         } else {
-            fragment = new DummySectionFragment();
+            fragment = new HistoryFragment();
         }
         
         Bundle args = new Bundle();

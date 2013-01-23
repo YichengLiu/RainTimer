@@ -9,4 +9,9 @@
     <string name="menu_settings">Settings</string>
     <string name="add_event">Add Event</string>
     <string name="event_list">Event List</string>
+    <string name="average">Average</string>
+    <string name="total">Total</string>
+    <string name="history_mode_title">Mode</string>
+    <string name="choose_btn_title">Choose</string>
+    <string name="start_date">Start Date</string>
 </resources>
