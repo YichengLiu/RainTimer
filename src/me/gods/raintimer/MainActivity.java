@@ -5,11 +5,9 @@ import android.app.FragmentTransaction;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentActivity;
-import android.support.v4.app.NavUtils;
 import android.view.Gravity;
 import android.view.LayoutInflater;
 import android.view.Menu;
-import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.TextView;
@@ -26,7 +24,7 @@ public class MainActivity extends FragmentActivity implements
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.activity_main);        
+        setContentView(R.layout.activity_main);
 
         // Set up the action bar to show tabs.
         final ActionBar actionBar = getActionBar();
@@ -60,13 +58,9 @@ public class MainActivity extends FragmentActivity implements
     }
 
     @Override
-    public void onTabSelected(ActionBar.Tab tab,
-            FragmentTransaction fragmentTransaction) {
-        // When the given tab is selected, show the tab contents in the
-        // container view.
-        
+    public void onTabSelected(ActionBar.Tab tab, FragmentTransaction fragmentTransaction) {
         Fragment fragment = null;
-        
+
         if (tab.getPosition() == 0) {
             fragment = new TimerFragment();
         } else if(tab.getPosition() == 2) {
@@ -74,9 +68,8 @@ public class MainActivity extends FragmentActivity implements
         } else {
             fragment = new HistoryFragment();
         }
-        
+
         Bundle args = new Bundle();
-        args.putInt(DummySectionFragment.ARG_SECTION_NUMBER, tab.getPosition() + 1);
         fragment.setArguments(args);
         getSupportFragmentManager().beginTransaction().replace(R.id.container, fragment).commit();
     }
@@ -87,34 +80,8 @@ public class MainActivity extends FragmentActivity implements
     }
 
     @Override
-    public void onTabReselected(ActionBar.Tab tab,
-            FragmentTransaction fragmentTransaction) {
-    }
+    public void onTabReselected(ActionBar.Tab tab, FragmentTransaction fragmentTransaction) {
 
-    /**
-     * A dummy fragment representing a section of the app, but that simply
-     * displays dummy text.
-     */
-    public static class DummySectionFragment extends Fragment {
-        /**
-         * The fragment argument representing the section number for this
-         * fragment.
-         */
-        public static final String ARG_SECTION_NUMBER = "section_number";
-
-        public DummySectionFragment() {
-        }
-
-        @Override
-        public View onCreateView(LayoutInflater inflater, ViewGroup container,
-                Bundle savedInstanceState) {
-            // Create a new TextView and set its text to the fragment's section
-            // number argument value.
-            TextView textView = new TextView(getActivity());
-            textView.setGravity(Gravity.CENTER);
-            textView.setText(Integer.toString(getArguments().getInt(ARG_SECTION_NUMBER)));
-            return textView;
-        }
     }
 
 }

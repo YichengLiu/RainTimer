@@ -7,7 +7,6 @@ import org.json.JSONArray;
 import org.json.JSONException;
 
 import android.app.Activity;
-import android.app.AlertDialog;
 import android.app.AlertDialog.Builder;
 import android.content.Context;
 import android.content.DialogInterface;
@@ -29,8 +28,8 @@ import android.widget.TextView;
 public class TimerFragment extends Fragment {
     private Spinner eventSpinner;
     private ArrayAdapter<String> adapter;
-    private TextView timerText;
-    private Button switcherButton;
+    private static TextView timerText;
+    private static Button switcherButton;
 
     private SharedPreferences settings;
 
@@ -42,13 +41,13 @@ public class TimerFragment extends Fragment {
     };
 
     private State state;
-    private long startTime;
-    private long offsetTime;
+    private static long startTime;
+    private static long offsetTime;
     private TimerThread timerThread;
     private String currentEvent;
     private SQLiteDatabase db;
 
-    final Handler handler = new Handler(){
+    final static Handler handler = new Handler(){
         public void handleMessage(Message msg){
             switch (msg.what) {
             case 1:
@@ -214,7 +213,7 @@ public class TimerFragment extends Fragment {
         return v;
     }
 
-    private String millisToTime(long millis) {
+    private static String millisToTime(long millis) {
         long millisecond = (millis / 10) % 100;
         long second = (millis / 1000) % 60;
         long minute = (millis / 1000 / 60) % 60;
