@@ -10,7 +10,6 @@ import android.graphics.Color;
 import android.graphics.Paint;
 import android.graphics.Paint.Align;
 import android.graphics.RectF;
-import android.util.AttributeSet;
 import android.view.MotionEvent;
 import android.view.View;
 import android.widget.LinearLayout;
@@ -318,10 +317,6 @@ abstract public class GraphView extends LinearLayout {
 		graphSeries.add(series);
 	}
 
-	public int getSeriesCount() {
-	    return graphSeries.size();
-	}
-
 	protected void drawLegend(Canvas canvas, float height, float width) {
 		int shapeSize = 15;
 
@@ -348,7 +343,7 @@ abstract public class GraphView extends LinearLayout {
 			paint.setColor(graphSeries.get(i).style.color);
 			canvas.drawRect(new RectF(lLeft+5, lTop+5+(i*(shapeSize+5)), lLeft+5+shapeSize, lTop+((i+1)*(shapeSize+5))), paint);
 			if (graphSeries.get(i).description != null) {
-				paint.setColor(Color.BLACK);
+				paint.setColor(Color.WHITE);
 				paint.setTextAlign(Align.LEFT);
 				canvas.drawText(graphSeries.get(i).description, lLeft+5+shapeSize+5, lTop+shapeSize+(i*(shapeSize+5)), paint);
 			}
@@ -408,7 +403,7 @@ abstract public class GraphView extends LinearLayout {
 		}
 
 		for (int i=0; i<=numLabels; i++) {
-			labels[numLabels-i] = formatLabel(min + ((max-min)*i/numLabels), false);
+			labels[numLabels-i] = formatLabel((int)(min + ((max-min)*i/numLabels)), false);
 		}
 		return labels;
 	}
@@ -535,12 +530,18 @@ abstract public class GraphView extends LinearLayout {
 		return showLegend;
 	}
 
+	@Override
+	public void invalidate() {
+        super.invalidate();
+        viewVerLabels.invalidate();
+	}
+
 	public void redrawAll() {
 		verlabels = null;
 		horlabels = null;
 		numberformatter[0] = null;
 		numberformatter[1] = null;
-		invalidate();
+		super.invalidate();
 		viewVerLabels.invalidate();
 	}
 
@@ -553,7 +554,8 @@ abstract public class GraphView extends LinearLayout {
 	{
 		if (index < 0 || index >= graphSeries.size())
 		{
-			throw new IndexOutOfBoundsException("No series at index " + index);
+			//throw new IndexOutOfBoundsException("No series at index " + index);
+		    return;
 		}
 
 		graphSeries.remove(index);

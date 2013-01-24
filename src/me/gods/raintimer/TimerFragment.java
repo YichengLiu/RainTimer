@@ -76,6 +76,13 @@ public class TimerFragment extends Fragment {
     }
 
     @Override
+    public void onPause () {
+        super.onPause();
+
+        db.close();
+    }
+
+    @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
         View v = inflater.inflate(R.layout.fragment_timer, container, false);
 
@@ -179,7 +186,7 @@ public class TimerFragment extends Fragment {
                                         public void onClick(DialogInterface arg0, int arg1) {
                                             String sql = "insert into history values(null, ?, ?, ?)";
                                             Calendar now = Calendar.getInstance();
-                                            String dateString = String.format("%02d-%02d-%04d", now.get(Calendar.MONTH) + 1, now.get(Calendar.DATE), now.get(Calendar.YEAR));
+                                            String dateString = String.format("%02d-%02d-%04d", now.get(Calendar.MONTH) + 1, now.get(Calendar.DATE) + 1, now.get(Calendar.YEAR));
                                             Object[] bindArgs = new Object[] {currentEvent, offsetTime, dateString};  
                                             db.execSQL(sql, bindArgs);
                                         }

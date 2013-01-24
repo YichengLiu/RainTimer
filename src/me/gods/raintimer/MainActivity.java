@@ -112,8 +112,7 @@ public class MainActivity extends FragmentActivity implements
             // number argument value.
             TextView textView = new TextView(getActivity());
             textView.setGravity(Gravity.CENTER);
-            textView.setText(Integer.toString(getArguments().getInt(
-                    ARG_SECTION_NUMBER)));
+            textView.setText(Integer.toString(getArguments().getInt(ARG_SECTION_NUMBER)));
             return textView;
         }
     }

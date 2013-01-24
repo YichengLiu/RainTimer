@@ -2,6 +2,7 @@ package me.gods.raintimer;
 
 import java.sql.Date;
 import java.text.DateFormatSymbols;
+import java.util.ArrayList;
 import java.util.Calendar;
 
 import org.json.JSONArray;
@@ -52,6 +53,13 @@ public class HistoryFragment extends Fragment {
     private GraphView graphView;
 
     private SQLiteDatabase db;
+
+    @Override
+    public void onPause () {
+        super.onPause();
+
+        db.close();
+    }
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
@@ -153,10 +161,6 @@ public class HistoryFragment extends Fragment {
     }
 
     public void updateChart() {
-        if (graphView.getSeriesCount() > 0) {
-            graphView.removeSeries(0);
-        }
-
         if (currentEvent == null
             || currentEvent.equals(getString(R.string.default_event))
             || startDate == null
@@ -165,22 +169,36 @@ public class HistoryFragment extends Fragment {
         } else if (startDate.compareTo(endDate) > 0 ) {
             Toast.makeText(getActivity().getApplicationContext(), "Invalid Date!", Toast.LENGTH_LONG).show();
         } else {
+            graphView.removeSeries(0);
+
             String startDateStr = String.format("%02d-%02d-%04d", startDate.getMonth() + 1, startDate.getDate(), startDate.getYear());
             String endDateStr = String.format("%02d-%02d-%04d", endDate.getMonth() + 1, endDate.getDate(), endDate.getYear());
 
-            Cursor c = db.rawQuery("SELECT * FROM history WHERE event_name = ? AND commit_date >= ? AND commit_date <= ?", new String[] {currentEvent, startDateStr, endDateStr});
+            String rawSQL = "SELECT event_name, commit_date, " + (modeSwithcer.isChecked() ? "avg" : "sum") + "(total_time) as target_time FROM history WHERE event_name = ? AND commit_date >= ? AND commit_date <= ? GROUP BY event_name, commit_date ORDER BY commit_date";
+            Cursor c = db.rawQuery(rawSQL, new String[] {currentEvent, startDateStr, endDateStr});
+
+            ArrayList<GraphViewData> dataPoints = new ArrayList<GraphViewData>();
+            ArrayList<String> pointsDate = new ArrayList<String>();
+
             while (c.moveToNext()) {
-                int _id = c.getInt(c.getColumnIndex("_id"));
-                String name = c.getString(c.getColumnIndex("event_name"));  
-                int age = c.getInt(c.getColumnIndex("total_time"));
+                String name = c.getString(c.getColumnIndex("event_name"));
+                int time = c.getInt(c.getColumnIndex("target_time"));
                 String date = c.getString(c.getColumnIndex("commit_date"));
-                Log.i("db", "_id=>" + _id + ", name=>" + name + ", age=>" + age + ", date=>" + date);  
-            }  
-            c.close();  
+                Log.i("db", "name=>" + name + ", time=>" + time + ", date=>" + date);
+
+                dataPoints.add(new GraphViewData(dataPoints.size(), time));
+                pointsDate.add(date.substring(0, 5));
+            }
+            c.close();
+
+            dataSeries = new GraphViewSeries(dataPoints.toArray(new GraphViewData[0]));
+            graphView.addSeries(dataSeries);
+            graphView.setHorizontalLabels(pointsDate.toArray(new String[0]));
+            graphView.setVerticalLabels(null); //clear the vertical labels;
+
+            graphView.invalidate();
         }
 
-        graphView.addSeries(dataSeries);
-        graphView.redrawAll();
     }
 
     public class DatePickerFragment extends DialogFragment implements DatePickerDialog.OnDateSetListener {
