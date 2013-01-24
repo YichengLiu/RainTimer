@@ -58,6 +58,7 @@
             android:layout_weight="1"
             android:paddingLeft="10dip" />
         <Switch
+            android:id="@+id/mode_switcher"
             android:layout_width="0dip"
             android:layout_height="fill_parent"
             android:textOn="@string/average"

@@ -15,4 +15,5 @@
     <string name="choose_btn_title">Choose</string>
     <string name="start_date">Since</string>
     <string name="end_date">Till</string>
+    <string name="default_event">Please choose a event&#8230;</string>
 </resources>

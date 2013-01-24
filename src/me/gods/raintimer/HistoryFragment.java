@@ -19,25 +19,33 @@ import android.app.DialogFragment;
 import android.content.SharedPreferences;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
-import android.view.Gravity;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
+import android.widget.CompoundButton;
 import android.widget.DatePicker;
 import android.widget.LinearLayout;
 import android.widget.Spinner;
+import android.widget.Switch;
 import android.widget.TextView;
+import android.widget.Toast;
 
 public class HistoryFragment extends Fragment {
     private Spinner eventSpinner;
     private ArrayAdapter<String> adapter;
     private SharedPreferences settings;
+    private String currentEvent;
 
     private static Date startDate;
     private static Date endDate;
     private static TextView startDateView;
     private static TextView endDateView;
+
+    private Switch modeSwithcer;
+    private GraphViewSeries dataSeries;
+    private GraphView graphView;
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
@@ -53,20 +61,16 @@ public class HistoryFragment extends Fragment {
             e.printStackTrace();
         }
 
-        int eventLength = eventArray.length();
-        String[] events;
+        int eventLength = eventArray.length() + 1;
+        final String[] events = new String[eventLength];
 
-        if (eventLength == 0) {
-            events = new String[] {"default"};
-        } else {
-            events = new String[eventLength];
+        events[0] = getString(R.string.default_event);
 
-            for (int i = 0; i < eventLength; i++) {
-                try {
-                    events[i] = eventArray.getString(i);
-                } catch (JSONException e) {
-                    e.printStackTrace();
-                }
+        for (int i = 1; i < eventLength; i++) {
+            try {
+                events[i] = eventArray.getString(i - 1);
+            } catch (JSONException e) {
+                e.printStackTrace();
             }
         }
 
@@ -74,6 +78,19 @@ public class HistoryFragment extends Fragment {
         adapter = new ArrayAdapter<String>(this.getActivity(), android.R.layout.simple_spinner_dropdown_item, events);
         adapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
         eventSpinner.setAdapter(adapter);
+
+        eventSpinner.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
+
+            @Override
+            public void onItemSelected(AdapterView<?> arg0, View arg1, int arg2, long arg3) {
+                currentEvent = events[arg2];
+                updateChart();
+            }
+
+            @Override
+            public void onNothingSelected(AdapterView<?> arg0) {
+            }
+        });
 
         startDate = null;
         endDate = null;
@@ -96,21 +113,29 @@ public class HistoryFragment extends Fragment {
             }
         });
 
-        GraphViewSeries exampleSeries = new GraphViewSeries(new GraphViewData[] {
+        modeSwithcer = (Switch)v.findViewById(R.id.mode_switcher);
+        modeSwithcer.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
+            @Override
+            public void onCheckedChanged(CompoundButton arg0, boolean isChecked) {
+                updateChart();
+            }
+        });
+
+        dataSeries = new GraphViewSeries(new GraphViewData[] {
                 new GraphViewData(1, 2.0d)
                 , new GraphViewData(2, 1.5d)
                 , new GraphViewData(3, 2.5d)
-                , new GraphViewData(4, 1.0d)
-        });
-
-        GraphView graphView = new LineGraphView(this.getActivity(), "");
-        graphView.addSeries(exampleSeries);
-
+                , new GraphViewData(4, 1.0d)});
+        graphView = new LineGraphView(this.getActivity(), "");
         LinearLayout.LayoutParams lp = new LinearLayout.LayoutParams(LinearLayout.LayoutParams.WRAP_CONTENT, LinearLayout.LayoutParams.WRAP_CONTENT);
         lp.setMargins(30, 30, 30, 20);
         graphView.setLayoutParams(lp);
         LinearLayout layout = (LinearLayout)v.findViewById(R.id.history_container);
         layout.addView(graphView);
+
+        graphView.addSeries(dataSeries);
+        graphView.redrawAll();
+
         return v;
     }
 
@@ -119,10 +144,34 @@ public class HistoryFragment extends Fragment {
         dateFragment.show(getActivity().getFragmentManager(), tag);
     }
 
-    public static class DatePickerFragment extends DialogFragment implements DatePickerDialog.OnDateSetListener {
+    public void updateChart() {
+        if (graphView.getSeriesCount() > 0) {
+            graphView.removeSeries(0);
+        }
+
+        if (currentEvent == null
+            || currentEvent.equals(getString(R.string.default_event))
+            || startDate == null
+            || endDate == null) {
+            
+        } else if (startDate.compareTo(endDate) > 0 ) {
+            Toast.makeText(getActivity().getApplicationContext(), "Invalid Date!", Toast.LENGTH_LONG).show();
+        } else {
+            dataSeries = new GraphViewSeries(new GraphViewData[] {
+                    new GraphViewData(1, 1d)
+                    , new GraphViewData(2, 2d)
+                    , new GraphViewData(3, 3d)
+                    , new GraphViewData(4, 4d)
+            });
+        }
+
+        graphView.addSeries(dataSeries);
+        graphView.redrawAll();
+    }
+
+    public class DatePickerFragment extends DialogFragment implements DatePickerDialog.OnDateSetListener {
         @Override
         public Dialog onCreateDialog(Bundle savedInstanceState) {
-            // Use the current date as the default date in the picker
             int year, month, day;
 
             if (this.getTag().equals("Start") && startDate == null || this.getTag().equals("End") && endDate == null) {
@@ -142,7 +191,7 @@ public class HistoryFragment extends Fragment {
         }
 
         @Override
-        public void onDateSet(DatePicker view, int year, int monthOfYear, int dayOfMonth) {
+        public void onDateSet(DatePicker arg0, int year, int monthOfYear, int dayOfMonth) {
             if (this.getTag().equals("Start")) {
                 startDate = new Date(year, monthOfYear, dayOfMonth);
                 startDateView.setText(String.format("%s-%02d-%04d", new DateFormatSymbols().getMonths()[monthOfYear].substring(0,3), dayOfMonth, year));
@@ -150,6 +199,7 @@ public class HistoryFragment extends Fragment {
                 endDate = new Date(year, monthOfYear, dayOfMonth);
                 endDateView.setText(String.format("%s-%02d-%04d", new DateFormatSymbols().getMonths()[monthOfYear].substring(0,3), dayOfMonth, year));
             }
+            updateChart();
         }
     }
 }

@@ -91,7 +91,7 @@ public class PreferenceFragment extends Fragment {
                             }
 
                             eventList.add(added);
-                            update();
+                            updateStorage();
                         }
                     })
                     .setNegativeButton("Cancel", null)
@@ -110,13 +110,13 @@ public class PreferenceFragment extends Fragment {
 
         if (item.getItemId() == 0) {
             eventList.remove(position);
-            update();
+            updateStorage();
         }
 
         return super.onContextItemSelected(item);
     }
 
-    private void update() {
+    private void updateStorage() {
         eventArray = new JSONArray(eventList);
 
         SharedPreferences.Editor editor = settings.edit();

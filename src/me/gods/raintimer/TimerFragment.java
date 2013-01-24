@@ -80,20 +80,16 @@ public class TimerFragment extends Fragment {
             e.printStackTrace();
         }
 
-        int eventLength = eventArray.length();
-        String[] events;
+        int eventLength = eventArray.length() + 1;
+        final String[] events = new String[eventLength];
 
-        if (eventLength == 0) {
-            events = new String[] {"default"};
-        } else {
-            events = new String[eventLength];
+        events[0] = getString(R.string.default_event);
 
-            for (int i = 0; i < eventLength; i++) {
-                try {
-                    events[i] = eventArray.getString(i);
-                } catch (JSONException e) {
-                    e.printStackTrace();
-                }
+        for (int i = 1; i < eventLength; i++) {
+            try {
+                events[i] = eventArray.getString(i - 1);
+            } catch (JSONException e) {
+                e.printStackTrace();
             }
         }
 
