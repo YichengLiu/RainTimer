@@ -185,8 +185,8 @@ public class TimerFragment extends Fragment {
                                         public void onClick(DialogInterface arg0, int arg1) {
                                             String sql = "insert into history values(null, ?, ?, ?)";
                                             Calendar now = Calendar.getInstance();
-                                            String dateString = String.format("%02d-%02d-%04d", now.get(Calendar.MONTH) + 1, now.get(Calendar.DATE) + 1, now.get(Calendar.YEAR));
-                                            Object[] bindArgs = new Object[] {currentEvent, offsetTime, dateString};  
+                                            String dateString = String.format("%02d-%02d-%04d", now.get(Calendar.MONTH) + 1, now.get(Calendar.DATE), now.get(Calendar.YEAR));
+                                            Object[] bindArgs = new Object[] {currentEvent, offsetTime, dateString};
                                             db.execSQL(sql, bindArgs);
                                         }
                                     })
