@@ -457,13 +457,17 @@ abstract public class GraphView extends LinearLayout {
 		double largest;
 		if (manualYAxis) {
 			largest = manualMaxYValue;
-		} else {
-			largest = Integer.MIN_VALUE;
-			for (int i=0; i<graphSeries.size(); i++) {
-				GraphViewData[] values = _values(i);
-				for (int ii=0; ii<values.length; ii++)
-					if (values[ii].valueY > largest)
-						largest = values[ii].valueY;
+		} else {			
+			if (graphSeries.size() == 0) {
+			    largest = 500;
+			} else {
+			    largest = Integer.MIN_VALUE;
+    			for (int i=0; i<graphSeries.size(); i++) {
+    				GraphViewData[] values = _values(i);
+    				for (int ii=0; ii<values.length; ii++)
+    					if (values[ii].valueY > largest)
+    						largest = values[ii].valueY;
+    			}
 			}
 		}
 		return largest;
@@ -511,13 +515,17 @@ abstract public class GraphView extends LinearLayout {
 		if (manualYAxis) {
 			smallest = manualMinYValue;
 		} else {
-			smallest = Integer.MAX_VALUE;
-			for (int i=0; i<graphSeries.size(); i++) {
-				GraphViewData[] values = _values(i);
-				for (int ii=0; ii<values.length; ii++)
-					if (values[ii].valueY < smallest)
-						smallest = values[ii].valueY;
-			}
+		    if (graphSeries.size() == 0) {
+                smallest = 0;
+            } else {
+    			smallest = Integer.MAX_VALUE;
+    			for (int i=0; i<graphSeries.size(); i++) {
+    				GraphViewData[] values = _values(i);
+    				for (int ii=0; ii<values.length; ii++)
+    					if (values[ii].valueY < smallest)
+    						smallest = values[ii].valueY;
+    			}
+            }
 		}
 		return smallest;
 	}

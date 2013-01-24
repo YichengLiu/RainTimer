@@ -179,6 +179,8 @@ public class HistoryFragment extends Fragment {
 
             ArrayList<GraphViewData> dataPoints = new ArrayList<GraphViewData>();
             ArrayList<String> pointsDate = new ArrayList<String>();
+            double maxY = 0;
+            double minY = 24 * 60 * 60 * 1000;
 
             while (c.moveToNext()) {
                 String name = c.getString(c.getColumnIndex("event_name"));
@@ -188,6 +190,13 @@ public class HistoryFragment extends Fragment {
 
                 dataPoints.add(new GraphViewData(dataPoints.size(), time));
                 pointsDate.add(date.substring(0, 5));
+
+                if (time > maxY) {
+                    maxY = time;
+                }
+                if (time < minY) {
+                    minY = time;
+                }
             }
             c.close();
 
@@ -195,6 +204,8 @@ public class HistoryFragment extends Fragment {
             graphView.addSeries(dataSeries);
             graphView.setHorizontalLabels(pointsDate.toArray(new String[0]));
             graphView.setVerticalLabels(null); //clear the vertical labels;
+            graphView.setManualYAxis(true);
+            graphView.setManualYAxisBounds(maxY == 0 ? 500 : ((maxY + 1000) - (maxY + 1000) % 100), (minY == 24 * 60 * 60 * 1000 || minY < 1000) ? 0 : ((minY - 1000) - (minY - 1000) % 100));
 
             graphView.invalidate();
         }
