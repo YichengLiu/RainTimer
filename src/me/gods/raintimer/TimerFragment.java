@@ -213,7 +213,7 @@ public class TimerFragment extends Fragment {
         return v;
     }
 
-    private static String millisToTime(long millis) {
+    public static String millisToTime(long millis) {
         long millisecond = (millis / 10) % 100;
         long second = (millis / 1000) % 60;
         long minute = (millis / 1000 / 60) % 60;

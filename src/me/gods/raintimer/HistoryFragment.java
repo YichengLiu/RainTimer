@@ -203,10 +203,18 @@ public class HistoryFragment extends Fragment {
             dataSeries = new GraphViewSeries(dataPoints.toArray(new GraphViewData[0]));
             graphView.addSeries(dataSeries);
             graphView.setHorizontalLabels(pointsDate.toArray(new String[0]));
-            graphView.setVerticalLabels(null); //clear the vertical labels;
             graphView.setManualYAxis(true);
-            graphView.setManualYAxisBounds(maxY == 0 ? 500 : ((maxY + 1000) - (maxY + 1000) % 100), (minY == 24 * 60 * 60 * 1000 || minY < 1000) ? 0 : ((minY - 1000) - (minY - 1000) % 100));
+            int upBound = (int) (maxY == 0 ? 500 : ((maxY + 1000) - (maxY + 1000) % 1000));
+            int bottomBound = (int)((minY == 24 * 60 * 60 * 1000 || minY < 1000) ? 0 : ((minY - 1000) - (minY - 1000) % 1000));
+            graphView.setManualYAxisBounds(upBound, bottomBound);
+            ArrayList<String> verticalLabels = new ArrayList<String>();
+            int split = 7;
 
+            for (int i = 0; i < split + 1; i++) {
+                verticalLabels.add(TimerFragment.millisToTime((int)(upBound * (split - i) / split + bottomBound * i / split)));
+            }
+
+            graphView.setVerticalLabels(verticalLabels.toArray(new String[0]));
             graphView.invalidate();
         }
 
