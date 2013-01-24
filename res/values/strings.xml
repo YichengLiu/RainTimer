@@ -13,6 +13,6 @@
     <string name="total">Total</string>
     <string name="history_mode_title">Mode</string>
     <string name="choose_btn_title">Choose</string>
-    <string name="start_date">Start Date</string>
-    <string name="end_date">End Date</string>
+    <string name="start_date">Since</string>
+    <string name="end_date">Till</string>
 </resources>
