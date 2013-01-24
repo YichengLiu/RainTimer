@@ -7,8 +7,10 @@ import org.json.JSONException;
 
 import android.app.Activity;
 import android.app.AlertDialog;
+import android.content.Context;
 import android.content.DialogInterface;
 import android.content.SharedPreferences;
+import android.database.sqlite.SQLiteDatabase;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
 import android.view.ContextMenu;
@@ -34,8 +36,12 @@ public class PreferenceFragment extends Fragment {
     private SharedPreferences settings;
     JSONArray eventArray = null;
 
+    private SQLiteDatabase db;
+
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
         View v = inflater.inflate(R.layout.fragment_preference, container, false);
+
+        db = getActivity().openOrCreateDatabase("raintimer.db", Context.MODE_PRIVATE, null);
 
         eventList = new ArrayList<String>();
         settings = this.getActivity().getPreferences(Activity.MODE_PRIVATE);
@@ -62,7 +68,8 @@ public class PreferenceFragment extends Fragment {
         eventListView.setOnCreateContextMenuListener(new View.OnCreateContextMenuListener() {
             @Override
             public void onCreateContextMenu(ContextMenu menu, View v, ContextMenuInfo menuInfo) {
-                menu.setHeaderTitle("Delete this event?");
+                menu.setHeaderIcon(android.R.drawable.ic_delete);
+                menu.setHeaderTitle("This operation will delete all data about this event. Continue?");
                 menu.add(0, 0, 0, "Delete");
                 menu.add(0, 1, 0, "Cancel");  
             }
@@ -73,7 +80,6 @@ public class PreferenceFragment extends Fragment {
 
             @Override
             public void onClick(View arg0) {
-                //String added = "haha";
                 AlertDialog.Builder dialog = new AlertDialog.Builder(getActivity())
                     .setTitle("Please Input Event Name")
                     .setIcon(android.R.drawable.ic_dialog_info);
@@ -105,10 +111,16 @@ public class PreferenceFragment extends Fragment {
     }
 
     @Override
+    public void onPause() {
+        super.onPause();
+        db.close();
+    }
+    @Override
     public boolean onContextItemSelected(MenuItem item) {
         int position = ((AdapterContextMenuInfo)item.getMenuInfo()).position;
 
         if (item.getItemId() == 0) {
+            db.delete("history", "event_name = ?", new String[]{eventList.get(position)});
             eventList.remove(position);
             updateStorage();
         }
