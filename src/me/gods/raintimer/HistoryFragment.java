@@ -4,19 +4,36 @@ import java.sql.Date;
 import java.text.DateFormatSymbols;
 import java.util.Calendar;
 
+import org.json.JSONArray;
+import org.json.JSONException;
+
+import com.jjoe64.graphview.GraphView;
+import com.jjoe64.graphview.GraphView.GraphViewData;
+import com.jjoe64.graphview.GraphViewSeries;
+import com.jjoe64.graphview.LineGraphView;
+
+import android.app.Activity;
 import android.app.DatePickerDialog;
 import android.app.Dialog;
 import android.app.DialogFragment;
+import android.content.SharedPreferences;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
-import android.util.Log;
+import android.view.Gravity;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.ArrayAdapter;
 import android.widget.DatePicker;
+import android.widget.LinearLayout;
+import android.widget.Spinner;
 import android.widget.TextView;
 
 public class HistoryFragment extends Fragment {
+    private Spinner eventSpinner;
+    private ArrayAdapter<String> adapter;
+    private SharedPreferences settings;
+
     private static Date startDate;
     private static Date endDate;
     private static TextView startDateView;
@@ -25,6 +42,38 @@ public class HistoryFragment extends Fragment {
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
         View v = inflater.inflate(R.layout.fragment_history, container, false);
+
+        settings = this.getActivity().getPreferences(Activity.MODE_PRIVATE);
+        String eventList = settings.getString(PreferenceFragment.PREFERENCE_KEY, "[]");
+
+        JSONArray eventArray = null;
+        try {
+            eventArray = new JSONArray(eventList);
+        } catch (JSONException e) {
+            e.printStackTrace();
+        }
+
+        int eventLength = eventArray.length();
+        String[] events;
+
+        if (eventLength == 0) {
+            events = new String[] {"default"};
+        } else {
+            events = new String[eventLength];
+
+            for (int i = 0; i < eventLength; i++) {
+                try {
+                    events[i] = eventArray.getString(i);
+                } catch (JSONException e) {
+                    e.printStackTrace();
+                }
+            }
+        }
+
+        eventSpinner = (Spinner)v.findViewById(R.id.event_spinner_history);
+        adapter = new ArrayAdapter<String>(this.getActivity(), android.R.layout.simple_spinner_dropdown_item, events);
+        adapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
+        eventSpinner.setAdapter(adapter);
 
         startDate = null;
         endDate = null;
@@ -47,6 +96,21 @@ public class HistoryFragment extends Fragment {
             }
         });
 
+        GraphViewSeries exampleSeries = new GraphViewSeries(new GraphViewData[] {
+                new GraphViewData(1, 2.0d)
+                , new GraphViewData(2, 1.5d)
+                , new GraphViewData(3, 2.5d)
+                , new GraphViewData(4, 1.0d)
+        });
+
+        GraphView graphView = new LineGraphView(this.getActivity(), "");
+        graphView.addSeries(exampleSeries);
+
+        LinearLayout.LayoutParams lp = new LinearLayout.LayoutParams(LinearLayout.LayoutParams.WRAP_CONTENT, LinearLayout.LayoutParams.WRAP_CONTENT);
+        lp.setMargins(30, 30, 30, 20);
+        graphView.setLayoutParams(lp);
+        LinearLayout layout = (LinearLayout)v.findViewById(R.id.history_container);
+        layout.addView(graphView);
         return v;
     }
 
