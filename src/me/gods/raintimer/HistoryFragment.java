@@ -16,9 +16,13 @@ import android.app.Activity;
 import android.app.DatePickerDialog;
 import android.app.Dialog;
 import android.app.DialogFragment;
+import android.content.Context;
 import android.content.SharedPreferences;
+import android.database.Cursor;
+import android.database.sqlite.SQLiteDatabase;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -47,9 +51,13 @@ public class HistoryFragment extends Fragment {
     private GraphViewSeries dataSeries;
     private GraphView graphView;
 
+    private SQLiteDatabase db;
+
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
         View v = inflater.inflate(R.layout.fragment_history, container, false);
+
+        db = getActivity().openOrCreateDatabase("raintimer.db", Context.MODE_PRIVATE, null);
 
         settings = this.getActivity().getPreferences(Activity.MODE_PRIVATE);
         String eventList = settings.getString(PreferenceFragment.PREFERENCE_KEY, "[]");
@@ -157,12 +165,18 @@ public class HistoryFragment extends Fragment {
         } else if (startDate.compareTo(endDate) > 0 ) {
             Toast.makeText(getActivity().getApplicationContext(), "Invalid Date!", Toast.LENGTH_LONG).show();
         } else {
-            dataSeries = new GraphViewSeries(new GraphViewData[] {
-                    new GraphViewData(1, 1d)
-                    , new GraphViewData(2, 2d)
-                    , new GraphViewData(3, 3d)
-                    , new GraphViewData(4, 4d)
-            });
+            String startDateStr = String.format("%02d-%02d-%04d", startDate.getMonth() + 1, startDate.getDate(), startDate.getYear());
+            String endDateStr = String.format("%02d-%02d-%04d", endDate.getMonth() + 1, endDate.getDate(), endDate.getYear());
+
+            Cursor c = db.rawQuery("SELECT * FROM history WHERE event_name = ? AND commit_date >= ? AND commit_date <= ?", new String[] {currentEvent, startDateStr, endDateStr});
+            while (c.moveToNext()) {
+                int _id = c.getInt(c.getColumnIndex("_id"));
+                String name = c.getString(c.getColumnIndex("event_name"));  
+                int age = c.getInt(c.getColumnIndex("total_time"));
+                String date = c.getString(c.getColumnIndex("commit_date"));
+                Log.i("db", "_id=>" + _id + ", name=>" + name + ", age=>" + age + ", date=>" + date);  
+            }  
+            c.close();  
         }
 
         graphView.addSeries(dataSeries);
