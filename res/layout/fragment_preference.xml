@@ -10,9 +10,9 @@
         android:gravity="center"
         android:text="@string/event_list"
         style="@style/EventListTitle" />
-    <View  
-        android:layout_width="fill_parent"  
-        android:layout_height="2dp"  
+    <View
+        android:layout_width="fill_parent"
+        android:layout_height="2dp"
         android:background="?android:attr/listDivider" />
     <ListView
         android:id="@+id/event_list"

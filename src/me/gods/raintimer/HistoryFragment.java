@@ -68,7 +68,7 @@ public class HistoryFragment extends Fragment {
         db = getActivity().openOrCreateDatabase("raintimer.db", Context.MODE_PRIVATE, null);
 
         settings = this.getActivity().getPreferences(Activity.MODE_PRIVATE);
-        String eventList = settings.getString(PreferenceFragment.PREFERENCE_KEY, "[]");
+        String eventList = settings.getString(PreferenceFragment.EVENT_LIST, "[]");
 
         JSONArray eventArray = null;
         try {

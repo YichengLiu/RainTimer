@@ -26,7 +26,8 @@ import android.widget.EditText;
 import android.widget.ListView;
 
 public class PreferenceFragment extends Fragment {
-    public static final String PREFERENCE_KEY = "EventList";
+    public static final String FAVORITE_EVENT_LIST = "FavoriteEventList";
+    public static final String EVENT_LIST = "EventList";
 
     private ListView eventListView;
     private ArrayAdapter<String> adapter;
@@ -115,6 +116,7 @@ public class PreferenceFragment extends Fragment {
         super.onPause();
         db.close();
     }
+
     @Override
     public boolean onContextItemSelected(MenuItem item) {
         int position = ((AdapterContextMenuInfo)item.getMenuInfo()).position;
@@ -132,7 +134,7 @@ public class PreferenceFragment extends Fragment {
         eventArray = new JSONArray(eventList);
 
         SharedPreferences.Editor editor = settings.edit();
-        editor.putString(PREFERENCE_KEY, eventArray.toString());
+        editor.putString(EVENT_LIST, eventArray.toString());
         editor.commit();
 
         adapter.notifyDataSetChanged();

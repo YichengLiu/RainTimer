@@ -7,6 +7,7 @@ import org.json.JSONArray;
 import org.json.JSONException;
 
 import android.app.Activity;
+import android.app.AlertDialog;
 import android.app.AlertDialog.Builder;
 import android.content.Context;
 import android.content.DialogInterface;
@@ -16,22 +17,33 @@ import android.os.Bundle;
 import android.os.Handler;
 import android.os.Message;
 import android.support.v4.app.Fragment;
+import android.util.Log;
+import android.util.SparseBooleanArray;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
 import android.widget.Button;
+import android.widget.RadioButton;
 import android.widget.Spinner;
 import android.widget.TextView;
 
 public class TimerFragment extends Fragment {
+    private TextView favoriteEvents;
+    private RadioButton[] radios = new RadioButton[6];
+    private int[] radioIds = new int[6];
+    private FavoriteRadioListener frl = new FavoriteRadioListener();
     private Spinner eventSpinner;
     private ArrayAdapter<String> adapter;
     private static TextView timerText;
     private static Button switcherButton;
 
     private SharedPreferences settings;
+    private String[] events;
+    private int eventLength;
+    private String[] candidateFavorite;
+    private JSONArray favoriteArray;
 
     private enum State {
         reset,
@@ -89,7 +101,7 @@ public class TimerFragment extends Fragment {
         db.execSQL("CREATE TABLE IF NOT EXISTS history (_id INTEGER PRIMARY KEY AUTOINCREMENT, event_name VARCHAR, total_time INT, commit_date VARCHAR)");
 
         settings = this.getActivity().getPreferences(Activity.MODE_PRIVATE);
-        String eventList = settings.getString(PreferenceFragment.PREFERENCE_KEY, "[]");
+        String eventList = settings.getString(PreferenceFragment.EVENT_LIST, "[]");
 
         JSONArray eventArray = null;
         try {
@@ -98,8 +110,8 @@ public class TimerFragment extends Fragment {
             e.printStackTrace();
         }
 
-        int eventLength = eventArray.length() + 1;
-        final String[] events = new String[eventLength];
+        eventLength = eventArray.length() + 1;
+        events = new String[eventLength];
 
         events[0] = getString(R.string.default_event);
 
@@ -110,6 +122,68 @@ public class TimerFragment extends Fragment {
                 e.printStackTrace();
             }
         }
+
+        String favoriteList = settings.getString(PreferenceFragment.FAVORITE_EVENT_LIST, "[]");
+        favoriteArray = null;
+        try {
+            favoriteArray = new JSONArray(eventList);
+        } catch (JSONException e) {
+            e.printStackTrace();
+        }
+
+        candidateFavorite = new String[eventLength - 1];
+
+        for (int i = 0; i < eventLength - 1; i++) {
+            try {
+                candidateFavorite[i] = eventArray.getString(i);
+            } catch (JSONException e) {
+                e.printStackTrace();
+            }
+        }
+
+        radioIds[0] = R.id.radio_0;
+        radioIds[1] = R.id.radio_1;
+        radioIds[2] = R.id.radio_2;
+        radioIds[3] = R.id.radio_3;
+        radioIds[4] = R.id.radio_4;
+        radioIds[5] = R.id.radio_5;
+
+        for (int i = 0; i < 6; i++) {
+            radios[i] = (RadioButton)v.findViewById(radioIds[i]);
+            radios[i].setOnClickListener(frl);
+        }
+
+        updateFavoriteRadios();
+
+        favoriteEvents = (TextView)v.findViewById(R.id.favorite_events);
+        favoriteEvents.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                AlertDialog dialog = new AlertDialog.Builder(getActivity())
+                .setIcon(android.R.drawable.btn_star_big_on)
+                .setTitle("Choose Favorite")
+                .setMultiChoiceItems(candidateFavorite, new boolean[eventLength - 1], null)
+                .setPositiveButton("Yes", new DialogInterface.OnClickListener() {
+                    @Override
+                    public void onClick(DialogInterface arg0, int arg1) {
+                        SparseBooleanArray Checked = ((AlertDialog) arg0).getListView().getCheckedItemPositions();
+
+                        favoriteArray = new JSONArray();
+                        for (int i = 0; i < eventLength - 1; i++) {
+                            if (Checked.get(i)) {
+                                favoriteArray.put(candidateFavorite[i]);
+                            }
+                        }
+
+                        settings.edit().putString(PreferenceFragment.FAVORITE_EVENT_LIST, favoriteArray.toString()).commit();
+
+                        updateFavoriteRadios();
+                    }
+                })
+                .setNegativeButton("No",  null).create();
+                dialog.show(); 
+            }
+        });
 
         eventSpinner = (Spinner)v.findViewById(R.id.event_spinner);
         adapter = new ArrayAdapter<String>(this.getActivity(), R.layout.spinner_text, events);
@@ -190,7 +264,7 @@ public class TimerFragment extends Fragment {
                                             db.execSQL(sql, bindArgs);
                                         }
                                     })
-                                    .setNegativeButton("Cancel", null).show();
+                                    .setNegativeButton("Discard", null).show();
                         }
 
                         break;
@@ -221,6 +295,24 @@ public class TimerFragment extends Fragment {
         return String.format(Locale.getDefault(), "%d'%02d\"%02d", minute, second, millisecond);
     }
 
+    public void updateFavoriteRadios() {
+        int i;
+        int length = favoriteArray.length();
+
+        for (i = 0; i < length; i++) {
+            try {
+                radios[i].setText(favoriteArray.getString(i));
+                radios[i].setVisibility(View.VISIBLE);
+            } catch (Exception e) {
+                Log.e("RADIO", "Cannot set text");
+            }
+        }
+
+        for (;i < 6; i++) {
+            radios[i].setVisibility(View.GONE);
+        }
+    }
+
     public void updateButton() {
         switch(state) {
             case reset:
@@ -237,7 +329,7 @@ public class TimerFragment extends Fragment {
         }
     }
 
-    public class TimerThread extends Thread {      // thread
+    public class TimerThread extends Thread {
         @Override
         public void run(){
             while(state == TimerFragment.State.running){
@@ -251,5 +343,27 @@ public class TimerFragment extends Fragment {
                 }
             }
         }
+    }
+
+    public class FavoriteRadioListener implements View.OnClickListener {
+
+        @Override
+        public void onClick(View v) {
+            for (int i = 0; i < 6; i++) {
+                if (radioIds[i] == v.getId()) {
+                    radios[i].setChecked(true);
+                    currentEvent = radios[i].getText().toString();
+
+                    for (int j = 0; j < eventLength; j++) {
+                        if (currentEvent.equals(events[j])) {
+                            eventSpinner.setSelection(j);
+                        }
+                    }
+                }else {
+                    radios[i].setChecked(false);
+                }
+            }
+        }
+        
     }
 }

@@ -16,4 +16,5 @@
     <string name="start_date">Since</string>
     <string name="end_date">Till</string>
     <string name="default_event">Please choose a event&#8230;</string>
+    <string name="favorite_events">Favorites</string>
 </resources>

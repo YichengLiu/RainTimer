@@ -3,9 +3,50 @@
     android:layout_width="fill_parent"
     android:layout_height="fill_parent"
     android:orientation="vertical" >
+    <TextView 
+        android:id="@+id/favorite_events"
+        android:layout_width="fill_parent"
+        android:layout_height="wrap_content"
+        android:paddingTop="5dp"
+        android:paddingBottom="5dp"
+        android:paddingLeft="15dp"
+        android:textSize="20sp"
+        android:text="@string/favorite_events"
+        android:background="@android:drawable/list_selector_background" />
+    <View
+        android:layout_width="fill_parent"
+        android:layout_height="2dp"
+        android:background="?android:attr/listDivider" />
+    <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+        android:layout_width="fill_parent"
+        android:layout_height="wrap_content"
+        android:orientation="horizontal">
+        <RadioButton android:id="@+id/radio_0"
+            style="@style/Favorite_Ratio_Button" />
+        <RadioButton android:id="@+id/radio_1"
+            style="@style/Favorite_Ratio_Button"/>
+        <RadioButton android:id="@+id/radio_2"
+            style="@style/Favorite_Ratio_Button" />
+    </LinearLayout>
+    <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+        android:layout_width="fill_parent"
+        android:layout_height="wrap_content"
+        android:orientation="horizontal">
+        <RadioButton android:id="@+id/radio_3"
+            style="@style/Favorite_Ratio_Button" />
+        <RadioButton android:id="@+id/radio_4"
+            style="@style/Favorite_Ratio_Button" />
+        <RadioButton android:id="@+id/radio_5"
+            style="@style/Favorite_Ratio_Button" />
+    </LinearLayout>
+    <View
+        android:layout_width="fill_parent"
+        android:layout_height="2dp"
+        android:background="?android:attr/listDivider" />
     <Spinner android:id="@+id/event_spinner" 
            android:layout_width="fill_parent"
-           android:layout_height="wrap_content" />
+           android:layout_height="wrap_content"
+           android:prompt="@string/default_event" />
     <TextView 
         android:id="@+id/timer_text"
         android:layout_width="fill_parent"
