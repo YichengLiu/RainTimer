@@ -29,6 +29,7 @@ import android.widget.Button;
 import android.widget.RadioButton;
 import android.widget.Spinner;
 import android.widget.TextView;
+import android.widget.Toast;
 
 public class TimerFragment extends Fragment {
     private TextView favoriteEvents;
@@ -112,12 +113,12 @@ public class TimerFragment extends Fragment {
             e.printStackTrace();
         }
 
-        eventLength = eventArray.length() + 1;
-        events = new String[eventLength];
+        eventLength = eventArray.length();
+        events = new String[eventLength + 1];
 
         events[0] = getString(R.string.default_event);
 
-        for (int i = 1; i < eventLength; i++) {
+        for (int i = 1; i < eventLength + 1; i++) {
             try {
                 events[i] = eventArray.getString(i - 1);
             } catch (JSONException e) {
@@ -133,10 +134,10 @@ public class TimerFragment extends Fragment {
             e.printStackTrace();
         }
 
-        candidateFavorite = new String[eventLength - 1];
-        candidateChecked = new boolean[eventLength - 1];
+        candidateFavorite = new String[eventLength];
+        candidateChecked = new boolean[eventLength];
 
-        for (int i = 0; i < eventLength - 1; i++) {
+        for (int i = 0; i < eventLength; i++) {
             try {
                 candidateFavorite[i] = eventArray.getString(i);
             } catch (JSONException e) {
@@ -182,7 +183,19 @@ public class TimerFragment extends Fragment {
 
                     @Override
                     public void onClick(DialogInterface arg0, int which, boolean isChecked) {
-                        // TODO Auto-generated method stub
+                        int count = 0;
+                        for (int i = 0; i < eventLength; i++) {
+                            if (candidateChecked[i]) {
+                                Log.i("caca", "checked" + count);
+                                count ++;
+                            }
+                            if (count > 6) {
+                                Toast.makeText(getActivity(), "No more than 6:)", Toast.LENGTH_SHORT).show();
+                                ((AlertDialog) arg0).getButton(arg0.BUTTON_POSITIVE).setEnabled(false);
+                            } else {
+                                ((AlertDialog) arg0).getButton(arg0.BUTTON_POSITIVE).setEnabled(true);
+                            }
+                        }
                     }
 
                 })
