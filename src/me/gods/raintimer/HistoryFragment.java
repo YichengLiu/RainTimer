@@ -245,10 +245,10 @@ public class HistoryFragment extends Fragment {
         public void onDateSet(DatePicker arg0, int year, int monthOfYear, int dayOfMonth) {
             if (this.getTag().equals("Start")) {
                 startDate = new Date(year, monthOfYear, dayOfMonth);
-                startDateView.setText(String.format("%s-%02d-%04d", new DateFormatSymbols().getMonths()[monthOfYear].substring(0,3), dayOfMonth, year));
+                startDateView.setText(String.format("%s-%02d-%04d", new DateFormatSymbols().getMonths()[monthOfYear], dayOfMonth, year));
             } else {
                 endDate = new Date(year, monthOfYear, dayOfMonth);
-                endDateView.setText(String.format("%s-%02d-%04d", new DateFormatSymbols().getMonths()[monthOfYear].substring(0,3), dayOfMonth, year));
+                endDateView.setText(String.format("%s-%02d-%04d", new DateFormatSymbols().getMonths()[monthOfYear], dayOfMonth, year));
             }
             updateChart();
         }
