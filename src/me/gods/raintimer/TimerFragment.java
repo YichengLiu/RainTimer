@@ -126,7 +126,7 @@ public class TimerFragment extends Fragment {
         String favoriteList = settings.getString(PreferenceFragment.FAVORITE_EVENT_LIST, "[]");
         favoriteArray = null;
         try {
-            favoriteArray = new JSONArray(eventList);
+            favoriteArray = new JSONArray(favoriteList);
         } catch (JSONException e) {
             e.printStackTrace();
         }
@@ -163,7 +163,7 @@ public class TimerFragment extends Fragment {
                 .setIcon(android.R.drawable.btn_star_big_on)
                 .setTitle("Choose Favorite")
                 .setMultiChoiceItems(candidateFavorite, new boolean[eventLength - 1], null)
-                .setPositiveButton("Yes", new DialogInterface.OnClickListener() {
+                .setPositiveButton("Save", new DialogInterface.OnClickListener() {
                     @Override
                     public void onClick(DialogInterface arg0, int arg1) {
                         SparseBooleanArray Checked = ((AlertDialog) arg0).getListView().getCheckedItemPositions();
@@ -180,7 +180,7 @@ public class TimerFragment extends Fragment {
                         updateFavoriteRadios();
                     }
                 })
-                .setNegativeButton("No",  null).create();
+                .setNegativeButton("Cancel",  null).create();
                 dialog.show(); 
             }
         });
