@@ -11,6 +11,7 @@ import android.app.AlertDialog;
 import android.app.AlertDialog.Builder;
 import android.content.Context;
 import android.content.DialogInterface;
+import android.content.DialogInterface.OnMultiChoiceClickListener;
 import android.content.SharedPreferences;
 import android.database.sqlite.SQLiteDatabase;
 import android.os.Bundle;
@@ -43,6 +44,7 @@ public class TimerFragment extends Fragment {
     private String[] events;
     private int eventLength;
     private String[] candidateFavorite;
+    private boolean[] candidateChecked;
     private JSONArray favoriteArray;
 
     private enum State {
@@ -132,12 +134,26 @@ public class TimerFragment extends Fragment {
         }
 
         candidateFavorite = new String[eventLength - 1];
+        candidateChecked = new boolean[eventLength - 1];
 
         for (int i = 0; i < eventLength - 1; i++) {
             try {
                 candidateFavorite[i] = eventArray.getString(i);
             } catch (JSONException e) {
                 e.printStackTrace();
+            }
+        }
+
+        for (int i = 0; i < favoriteArray.length(); i++) {
+            for (int j = 0; j < candidateFavorite.length; j++) {
+                try {
+                    if (favoriteArray.getString(i).equals(candidateFavorite[j])) {
+                        candidateChecked[j] = true;
+                        break;
+                    }
+                } catch (JSONException e) {
+                    e.printStackTrace();
+                }
             }
         }
 
@@ -162,7 +178,14 @@ public class TimerFragment extends Fragment {
                 AlertDialog dialog = new AlertDialog.Builder(getActivity())
                 .setIcon(android.R.drawable.btn_star_big_on)
                 .setTitle("Choose Favorite")
-                .setMultiChoiceItems(candidateFavorite, new boolean[eventLength - 1], null)
+                .setMultiChoiceItems(candidateFavorite, candidateChecked, new OnMultiChoiceClickListener() {
+
+                    @Override
+                    public void onClick(DialogInterface arg0, int which, boolean isChecked) {
+                        // TODO Auto-generated method stub
+                    }
+
+                })
                 .setPositiveButton("Save", new DialogInterface.OnClickListener() {
                     @Override
                     public void onClick(DialogInterface arg0, int arg1) {
