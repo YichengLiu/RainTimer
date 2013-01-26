@@ -146,7 +146,8 @@ public class TimerFragment extends Fragment {
         }
 
         for (int i = 0; i < favoriteArray.length(); i++) {
-            for (int j = 0; j < candidateFavorite.length; j++) {
+            int j;
+            for (j = 0; j < candidateFavorite.length; j++) {
                 try {
                     if (favoriteArray.getString(i).equals(candidateFavorite[j])) {
                         candidateChecked[j] = true;
@@ -231,6 +232,12 @@ public class TimerFragment extends Fragment {
             @Override
             public void onItemSelected(AdapterView<?> arg0, View arg1, int arg2, long arg3) {
                 currentEvent = events[arg2];
+
+                if (arg2 == 0) {
+                    for (int i = 0; i < 6; i++) {
+                        radios[i].setChecked(false);
+                    }
+                }
             }
 
             @Override
@@ -390,11 +397,12 @@ public class TimerFragment extends Fragment {
                     radios[i].setChecked(true);
                     currentEvent = radios[i].getText().toString();
 
-                    for (int j = 0; j < eventLength; j++) {
+                    for (int j = 0; j < eventLength + 1; j++) {
                         if (currentEvent.equals(events[j])) {
                             eventSpinner.setSelection(j);
                         }
                     }
+                    Log.i("Caca", currentEvent);;
                 }else {
                     radios[i].setChecked(false);
                 }

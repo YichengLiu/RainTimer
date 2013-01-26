@@ -32,10 +32,12 @@ public class PreferenceFragment extends Fragment {
     private ListView eventListView;
     private ArrayAdapter<String> adapter;
     private Button addEventButton;
-    private ArrayList<String> eventList;
 
     private SharedPreferences settings;
+    private ArrayList<String> eventList;
     JSONArray eventArray = null;
+    private ArrayList<String> favoriteList;
+    JSONArray favoriteArray = null;
 
     private SQLiteDatabase db;
 
@@ -44,8 +46,8 @@ public class PreferenceFragment extends Fragment {
 
         db = getActivity().openOrCreateDatabase("raintimer.db", Context.MODE_PRIVATE, null);
 
-        eventList = new ArrayList<String>();
         settings = this.getActivity().getPreferences(Activity.MODE_PRIVATE);
+        eventList = new ArrayList<String>();
         String events = settings.getString("EventList", "[]");
         try {
             eventArray = new JSONArray(events);
@@ -57,6 +59,23 @@ public class PreferenceFragment extends Fragment {
         for (int i = 0; i < eventLength; i++) {
             try {
                 eventList.add(eventArray.getString(i));
+            } catch (JSONException e) {
+                e.printStackTrace();
+            }
+        }
+
+        favoriteList = new ArrayList<String>();
+        String favorites = settings.getString("EventList", "[]");
+        try {
+            favoriteArray = new JSONArray(favorites);
+        } catch (JSONException e) {
+            e.printStackTrace();
+        }
+
+        int favoriteLength = favoriteArray.length();
+        for (int i = 0; i < favoriteLength; i++) {
+            try {
+                favoriteList.add(favoriteArray.getString(i));
             } catch (JSONException e) {
                 e.printStackTrace();
             }
@@ -123,6 +142,7 @@ public class PreferenceFragment extends Fragment {
 
         if (item.getItemId() == 0) {
             db.delete("history", "event_name = ?", new String[]{eventList.get(position)});
+            favoriteList.remove(eventList.get(position));
             eventList.remove(position);
             updateStorage();
         }
@@ -132,9 +152,11 @@ public class PreferenceFragment extends Fragment {
 
     private void updateStorage() {
         eventArray = new JSONArray(eventList);
+        favoriteArray = new JSONArray(favoriteList);
 
         SharedPreferences.Editor editor = settings.edit();
         editor.putString(EVENT_LIST, eventArray.toString());
+        editor.putString(FAVORITE_EVENT_LIST, favoriteList.toString());
         editor.commit();
 
         adapter.notifyDataSetChanged();
