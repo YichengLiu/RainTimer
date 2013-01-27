@@ -18,24 +18,24 @@
         android:layout_height="2dp"
         android:background="?android:attr/listDivider" />
     <TableLayout android:layout_width="fill_parent"
-  android:layout_height="wrap_content"  >
-  <TableRow>
-        <RadioButton android:id="@+id/radio_0"
-            style="@style/Favorite_Ratio_Button" />
-        <RadioButton android:id="@+id/radio_1"
-            style="@style/Favorite_Ratio_Button"/>
-        <RadioButton android:id="@+id/radio_2"
-            style="@style/Favorite_Ratio_Button" />
-    </TableRow>
-    <TableRow>
-        <RadioButton android:id="@+id/radio_3"
-            style="@style/Favorite_Ratio_Button" />
-        <RadioButton android:id="@+id/radio_4"
-            style="@style/Favorite_Ratio_Button" />
-        <RadioButton android:id="@+id/radio_5"
-            style="@style/Favorite_Ratio_Button" />
-   </TableRow>
-   </TableLayout>
+        android:layout_height="wrap_content"  >
+        <TableRow>
+            <RadioButton android:id="@+id/radio_0"
+                style="@style/Favorite_Ratio_Button" />
+            <RadioButton android:id="@+id/radio_1"
+                style="@style/Favorite_Ratio_Button"/>
+            <RadioButton android:id="@+id/radio_2"
+                style="@style/Favorite_Ratio_Button" />
+        </TableRow>
+        <TableRow>
+            <RadioButton android:id="@+id/radio_3"
+                style="@style/Favorite_Ratio_Button" />
+            <RadioButton android:id="@+id/radio_4"
+                style="@style/Favorite_Ratio_Button" />
+            <RadioButton android:id="@+id/radio_5"
+                style="@style/Favorite_Ratio_Button" />
+        </TableRow>
+    </TableLayout>
     <View
         android:layout_width="fill_parent"
         android:layout_height="2dp"
