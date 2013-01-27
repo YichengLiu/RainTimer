@@ -351,6 +351,10 @@ public class TimerFragment extends Fragment {
             }
         }
 
+        for (;i % 3 != 0; i++) {
+            radios[i].setVisibility(View.INVISIBLE);
+        }
+
         for (;i < 6; i++) {
             radios[i].setVisibility(View.GONE);
         }

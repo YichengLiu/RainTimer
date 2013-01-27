@@ -17,28 +17,25 @@
         android:layout_width="fill_parent"
         android:layout_height="2dp"
         android:background="?android:attr/listDivider" />
-    <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
-        android:layout_width="fill_parent"
-        android:layout_height="wrap_content"
-        android:orientation="horizontal">
+    <TableLayout android:layout_width="fill_parent"
+  android:layout_height="wrap_content"  >
+  <TableRow>
         <RadioButton android:id="@+id/radio_0"
             style="@style/Favorite_Ratio_Button" />
         <RadioButton android:id="@+id/radio_1"
             style="@style/Favorite_Ratio_Button"/>
         <RadioButton android:id="@+id/radio_2"
             style="@style/Favorite_Ratio_Button" />
-    </LinearLayout>
-    <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
-        android:layout_width="fill_parent"
-        android:layout_height="wrap_content"
-        android:orientation="horizontal">
+    </TableRow>
+    <TableRow>
         <RadioButton android:id="@+id/radio_3"
             style="@style/Favorite_Ratio_Button" />
         <RadioButton android:id="@+id/radio_4"
             style="@style/Favorite_Ratio_Button" />
         <RadioButton android:id="@+id/radio_5"
             style="@style/Favorite_Ratio_Button" />
-    </LinearLayout>
+   </TableRow>
+   </TableLayout>
     <View
         android:layout_width="fill_parent"
         android:layout_height="2dp"
