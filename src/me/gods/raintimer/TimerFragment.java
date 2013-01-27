@@ -145,19 +145,7 @@ public class TimerFragment extends Fragment {
             }
         }
 
-        for (int i = 0; i < favoriteArray.length(); i++) {
-            int j;
-            for (j = 0; j < candidateFavorite.length; j++) {
-                try {
-                    if (favoriteArray.getString(i).equals(candidateFavorite[j])) {
-                        candidateChecked[j] = true;
-                        break;
-                    }
-                } catch (JSONException e) {
-                    e.printStackTrace();
-                }
-            }
-        }
+        updateCheckedArray();
 
         radioIds[0] = R.id.radio_0;
         radioIds[1] = R.id.radio_1;
@@ -187,14 +175,14 @@ public class TimerFragment extends Fragment {
                         int count = 0;
                         for (int i = 0; i < eventLength; i++) {
                             if (candidateChecked[i]) {
-                                Log.i("caca", "checked" + count);
                                 count ++;
                             }
+
                             if (count > 6) {
-                                Toast.makeText(getActivity(), "No more than 6:)", Toast.LENGTH_SHORT).show();
-                                ((AlertDialog) arg0).getButton(arg0.BUTTON_POSITIVE).setEnabled(false);
+                                Toast.makeText(getActivity(), "No more than 6 favorites", Toast.LENGTH_SHORT).show();
+                                ((AlertDialog) arg0).getButton(DialogInterface.BUTTON_POSITIVE).setEnabled(false);
                             } else {
-                                ((AlertDialog) arg0).getButton(arg0.BUTTON_POSITIVE).setEnabled(true);
+                                ((AlertDialog) arg0).getButton(DialogInterface.BUTTON_POSITIVE).setEnabled(true);
                             }
                         }
                     }
@@ -217,7 +205,13 @@ public class TimerFragment extends Fragment {
                         updateFavoriteRadios();
                     }
                 })
-                .setNegativeButton("Cancel",  null).create();
+                .setNegativeButton("Cancel",  new DialogInterface.OnClickListener() {
+                    @Override
+                    public void onClick(DialogInterface arg0, int arg1) {
+                        updateCheckedArray();
+                    }
+                })
+                .create();
                 dialog.show(); 
             }
         });
@@ -338,7 +332,7 @@ public class TimerFragment extends Fragment {
         return String.format(Locale.getDefault(), "%d'%02d\"%02d", minute, second, millisecond);
     }
 
-    public void updateFavoriteRadios() {
+    private void updateFavoriteRadios() {
         int i;
         int length = favoriteArray.length();
 
@@ -360,7 +354,23 @@ public class TimerFragment extends Fragment {
         }
     }
 
-    public void updateButton() {
+    private void updateCheckedArray() {
+        for (int i = 0; i < candidateFavorite.length; i++) {
+            candidateChecked[i] = false;
+            for (int j = 0; j < favoriteArray.length(); j++) {
+                try {
+                    if (favoriteArray.getString(j).equals(candidateFavorite[i])) {
+                        candidateChecked[i] = true;
+                        break;
+                    }
+                } catch (JSONException e) {
+                    e.printStackTrace();
+                }
+            }
+        }
+    }
+
+    private void updateButton() {
         switch(state) {
             case reset:
                 switcherButton.setText("Start");
