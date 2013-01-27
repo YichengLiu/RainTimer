@@ -2,9 +2,17 @@
 RainTimer
 =========
 
-This is a timer make for Goodrain.
+RainTimer is a multi-event timer on Android.
 
-##TODO##
-* A event list, you can choose one and start a timer for it
-* Edit event list
-* A history list, some aggregated view for each event over days or day over events
+##Feature
+* Custom event list
+* Historical statistics over events and day, support aggregate by both total and average
+
+##Usage
+* Timer
+    * use the main switcher to Start/Stop/Rest
+    * Touch the timer to pause/continue when running
+* Favorite event
+    * Touch the favorite title to edit favorite list
+* Historical statistics
+    * Select eventm, day range and mode then line chart will appear
