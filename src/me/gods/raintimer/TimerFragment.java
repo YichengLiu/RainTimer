@@ -272,6 +272,7 @@ public class TimerFragment extends Fragment {
                         startTime = System.currentTimeMillis();
                         timerThread = new TimerThread();
                         timerThread.start();
+                        changeControlEnable(false);
 
                         break;
                     case running:
@@ -309,6 +310,7 @@ public class TimerFragment extends Fragment {
                         state = State.reset;
                         timerText.setText("0'00\"00");
                         offsetTime = 0;
+                        changeControlEnable(true);
 
                         break;
                     default:
@@ -384,6 +386,13 @@ public class TimerFragment extends Fragment {
             default:
                 break;
         }
+    }
+
+    private void changeControlEnable(boolean enabled) {
+        for (int i = 0; i < 6; i++) {
+            radios[i].setEnabled(enabled);
+        }
+        eventSpinner.setEnabled(enabled);
     }
 
     public class TimerThread extends Thread {
