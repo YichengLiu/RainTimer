@@ -206,7 +206,7 @@ public class TimerFragment extends Fragment {
                         SparseBooleanArray Checked = ((AlertDialog) arg0).getListView().getCheckedItemPositions();
 
                         favoriteArray = new JSONArray();
-                        for (int i = 0; i < eventLength - 1; i++) {
+                        for (int i = 0; i < eventLength; i++) {
                             if (Checked.get(i)) {
                                 favoriteArray.put(candidateFavorite[i]);
                             }
