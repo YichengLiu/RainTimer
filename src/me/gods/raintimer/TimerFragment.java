@@ -227,9 +227,16 @@ public class TimerFragment extends Fragment {
             public void onItemSelected(AdapterView<?> arg0, View arg1, int arg2, long arg3) {
                 currentEvent = events[arg2];
 
-                if (arg2 == 0) {
-                    for (int i = 0; i < 6; i++) {
-                        radios[i].setChecked(false);
+                for (int i = 0; i < 6; i++) {
+                    radios[i].setChecked(false);
+                }
+
+                for (int i = 0; i < favoriteArray.length(); i++) {
+                    try {
+                        if (currentEvent.equals(favoriteArray.getString(i))) {
+                            radios[i].setChecked(true);
+                        }
+                    } catch (JSONException e) {
                     }
                 }
             }
