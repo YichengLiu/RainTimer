@@ -296,7 +296,7 @@ public class TimerFragment extends Fragment {
 
                         if (currentEvent != null && currentEvent != getString(R.string.default_event)) {
                             new Builder(getActivity())
-                                    .setMessage("Save this?")
+                                    .setMessage("Current events is " + currentEvent + ". Save?")
                                     .setTitle("Info")
                                     .setPositiveButton("Save", new DialogInterface.OnClickListener() {
 

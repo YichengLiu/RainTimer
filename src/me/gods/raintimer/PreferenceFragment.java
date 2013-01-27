@@ -48,7 +48,7 @@ public class PreferenceFragment extends Fragment {
 
         settings = this.getActivity().getPreferences(Activity.MODE_PRIVATE);
         eventList = new ArrayList<String>();
-        String events = settings.getString("EventList", "[]");
+        String events = settings.getString(EVENT_LIST, "[]");
         try {
             eventArray = new JSONArray(events);
         } catch (JSONException e) {
@@ -65,7 +65,7 @@ public class PreferenceFragment extends Fragment {
         }
 
         favoriteList = new ArrayList<String>();
-        String favorites = settings.getString("EventList", "[]");
+        String favorites = settings.getString(FAVORITE_EVENT_LIST, "[]");
         try {
             favoriteArray = new JSONArray(favorites);
         } catch (JSONException e) {
@@ -156,7 +156,7 @@ public class PreferenceFragment extends Fragment {
 
         SharedPreferences.Editor editor = settings.edit();
         editor.putString(EVENT_LIST, eventArray.toString());
-        editor.putString(FAVORITE_EVENT_LIST, favoriteList.toString());
+        editor.putString(FAVORITE_EVENT_LIST, favoriteArray.toString());
         editor.commit();
 
         adapter.notifyDataSetChanged();
