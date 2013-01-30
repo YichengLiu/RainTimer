@@ -1,18 +1,26 @@
 package me.gods.raintimer;
 
+import java.io.BufferedWriter;
+import java.io.File;
+import java.io.FileWriter;
+import java.io.IOException;
 import java.util.ArrayList;
 
 import org.json.JSONArray;
 import org.json.JSONException;
+import org.json.JSONObject;
 
 import android.app.Activity;
 import android.app.AlertDialog;
 import android.content.Context;
 import android.content.DialogInterface;
 import android.content.SharedPreferences;
+import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
 import android.os.Bundle;
+import android.os.Environment;
 import android.support.v4.app.Fragment;
+import android.util.Log;
 import android.view.ContextMenu;
 import android.view.LayoutInflater;
 import android.view.MenuItem;
@@ -32,6 +40,8 @@ public class PreferenceFragment extends Fragment {
     private ListView eventListView;
     private ArrayAdapter<String> adapter;
     private Button addEventButton;
+    private Button backupRestoreButton;
+
 
     private SharedPreferences settings;
     private ArrayList<String> eventList;
@@ -127,6 +137,34 @@ public class PreferenceFragment extends Fragment {
             }
         });
 
+        backupRestoreButton = (Button)v.findViewById(R.id.backup_restore_button);
+        backupRestoreButton.setOnClickListener(new View.OnClickListener() {
+
+            @Override
+            public void onClick(View arg0) {
+                new AlertDialog.Builder(getActivity())
+                    .setTitle("Backup/Restore")
+                    .setPositiveButton("Backup", new DialogInterface.OnClickListener() {
+
+                        @Override
+                        public void onClick(DialogInterface arg0, int arg1) {
+                            backupToExternalStorage();
+                        }
+
+                    })
+                    .setNegativeButton("Restore", new DialogInterface.OnClickListener() {
+
+                        @Override
+                        public void onClick(DialogInterface arg0, int arg1) {
+                            restoreFromExternalStorage();
+                        }
+
+                    })
+                    .setNeutralButton("Cancel", null)
+                    .create().show();
+            }
+        });
+
         return v;
     }
 
@@ -148,6 +186,56 @@ public class PreferenceFragment extends Fragment {
         }
 
         return super.onContextItemSelected(item);
+    }
+
+    private void backupToExternalStorage() {
+        File path = new File(Environment.getExternalStorageDirectory().toString() + "/data/me.gods.raintimer/");
+        if(!path.exists()) {
+            path.mkdirs();
+        }
+        File backupFile = new File(path, "data.restore");
+        JSONObject obj = new JSONObject();
+
+        String rawSQL = "SELECT event_name, commit_date, total_time FROM history";
+        Cursor c = db.rawQuery(rawSQL, null);
+        JSONArray historyArray = new JSONArray();
+
+        while (c.moveToNext()) {
+            String name = c.getString(c.getColumnIndex("event_name"));
+            int time = c.getInt(c.getColumnIndex("total_time"));
+            String date = c.getString(c.getColumnIndex("commit_date"));
+            Log.i("backup", "name=>" + name + ", time=>" + time + ", date=>" + date);
+
+            JSONObject historyObj = new JSONObject();
+            try {
+                historyObj.put("name", name);
+                historyObj.put("total_time", time);
+                historyObj.put("commit_date", date);
+
+                historyArray.put(historyObj);
+            } catch (JSONException e) {
+                e.printStackTrace();
+            }
+        }
+
+        try {
+            obj.put("events", eventArray);
+            obj.put("favorites", favoriteArray);
+            obj.put("history", historyArray);
+        } catch (JSONException e) {
+            e.printStackTrace();
+        }
+
+        try {
+            BufferedWriter output = new BufferedWriter(new FileWriter(backupFile));
+            output.write(obj.toString());
+        } catch (IOException e) {
+            Log.e("RainTimer", "Error in write file");
+        }
+    }
+
+    private void restoreFromExternalStorage() {
+
     }
 
     private void updateStorage() {

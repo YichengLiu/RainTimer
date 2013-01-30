@@ -24,4 +24,9 @@
         android:layout_width="fill_parent"
         android:layout_height="wrap_content"
         android:text="@string/add_event" />
+    <Button
+        android:id="@+id/backup_restore_button"
+        android:layout_width="fill_parent"
+        android:layout_height="wrap_content"
+        android:text="@string/backup_restore" />
 </LinearLayout>

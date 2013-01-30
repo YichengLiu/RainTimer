@@ -8,6 +8,7 @@
     <string name="hello_world">Hello world!</string>
     <string name="menu_settings">Settings</string>
     <string name="add_event">Add Event</string>
+    <string name="backup_restore">Backup/Restore</string>
     <string name="event_list">Event List</string>
     <string name="average">Average</string>
     <string name="total">Total</string>
