@@ -1,9 +1,13 @@
 package me.gods.raintimer;
 
+import java.io.BufferedReader;
 import java.io.BufferedWriter;
 import java.io.File;
+import java.io.FileInputStream;
+import java.io.FileNotFoundException;
 import java.io.FileWriter;
 import java.io.IOException;
+import java.io.InputStreamReader;
 import java.util.ArrayList;
 
 import org.json.JSONArray;
@@ -32,6 +36,7 @@ import android.widget.ArrayAdapter;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.ListView;
+import android.widget.Toast;
 
 public class PreferenceFragment extends Fragment {
     public static final String FAVORITE_EVENT_LIST = "FavoriteEventList";
@@ -208,7 +213,7 @@ public class PreferenceFragment extends Fragment {
 
             JSONObject historyObj = new JSONObject();
             try {
-                historyObj.put("name", name);
+                historyObj.put("event_name", name);
                 historyObj.put("total_time", time);
                 historyObj.put("commit_date", date);
 
@@ -229,13 +234,63 @@ public class PreferenceFragment extends Fragment {
         try {
             BufferedWriter output = new BufferedWriter(new FileWriter(backupFile));
             output.write(obj.toString());
+            output.flush();
+            output.close();
         } catch (IOException e) {
             Log.e("RainTimer", "Error in write file");
         }
     }
 
     private void restoreFromExternalStorage() {
+        File path = new File(Environment.getExternalStorageDirectory().toString() + "/data/me.gods.raintimer/");
 
+        if(!path.exists()) {
+            Toast.makeText(getActivity(), "You have not backup yet", Toast.LENGTH_SHORT).show();
+            return;
+        }
+
+        Log.i("raintimer", "start restore!");
+        try {
+            File backupFile = new File(path, "data.restore");
+            FileInputStream input = new FileInputStream(backupFile);
+            BufferedReader reader = new BufferedReader(new InputStreamReader(input));
+            StringBuilder sb = new StringBuilder();
+            String line = null;
+            while((line = reader.readLine()) != null) {
+                sb.append(line);
+            }
+            reader.close();
+
+            Log.i("raintimer", "load backup file = " + sb.toString());
+            JSONObject obj = new JSONObject(sb.toString());
+            JSONArray tmpEventArray = obj.getJSONArray("events");
+            eventList.clear();
+            for (int i = 0; i < tmpEventArray.length(); i++) {
+                eventList.add(tmpEventArray.getString(i));
+            }
+
+            JSONArray tmpFavoriteArray = obj.getJSONArray("favorites");
+            favoriteList.clear();
+            for (int i = 0; i < tmpFavoriteArray.length(); i++) {
+                favoriteList.add(tmpFavoriteArray.getString(i));
+            }
+
+            db.execSQL("delete from history");
+            JSONArray history = obj.getJSONArray("history");
+            for (int i = 0; i < history.length(); i++) {
+                JSONObject historyObj = history.getJSONObject(i);
+                String sql = "insert into history values(null, ?, ?, ?)";
+                db.execSQL(sql, new Object[] { historyObj.getString("event_name"), historyObj.getString("total_time"), historyObj.getString("commit_date") });
+            }
+
+            updateStorage();
+        } catch (FileNotFoundException e) {
+            e.printStackTrace();
+        } catch (IOException e) {
+            e.printStackTrace();
+        } catch (JSONException e) {
+            e.printStackTrace();
+        }
     }
 
     private void updateStorage() {
